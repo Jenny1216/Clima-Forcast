@@ -18,13 +18,31 @@ class ForecastCell: UITableViewCell {
     @IBOutlet weak var forecastTime: UILabel!
     @IBOutlet weak var forecastImage: UIImageView!
     
-    func configureForecastCell(forecast : ForecastDataModel) {
+    func configureForecastCellWithFahrenheit(forecast : ForecastDataModel) {
         
         forecastDay.text = forecast.day
         forecastTime.text = forecast.time
-        forecastMinTemp.text = "\(forecast.lowTemp)˚"
-        forecastMaxTemp.text = "\(forecast.highTemp)˚"
         forecastImage.image = UIImage(named: forecast.weatherImg)
         forecastImgLabel.text = forecast.weatherImg
+        
+        let minTemp = String(format: "%.2f", ((forecast.lowTemp - 273.15) * (9/5) + 32))
+        forecastMinTemp.text = "\(minTemp)˚"
+        let maxTemp = String(format: "%.2f", ((forecast.highTemp - 273.15) * (9/5) + 32))
+        forecastMaxTemp.text = "\(maxTemp)˚"
+        
+}
+    
+    func configureForecastCellWithCelcius(forecast : ForecastDataModel) {
+        
+        forecastDay.text = forecast.day
+        forecastTime.text = forecast.time
+        forecastImage.image = UIImage(named: forecast.weatherImg)
+        forecastImgLabel.text = forecast.weatherImg
+        
+        let minTemp = String(format: "%.2f", (forecast.lowTemp - 273.15))
+        forecastMinTemp.text = "\(minTemp)˚"
+        let maxTemp = String(format: "%.2f", (forecast.highTemp - 273.15))
+        forecastMaxTemp.text = "\(maxTemp)˚"
+        
     }
 }

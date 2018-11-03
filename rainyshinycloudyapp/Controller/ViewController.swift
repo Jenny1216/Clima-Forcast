@@ -23,6 +23,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let currentWeatherDataModel = CurrentWeatherDataModel()    
     let formatter = DateFormatter()
     var arrayToStoreObjData = [JSON]()
+    let forecastCell = ForecastCell()
+    var isCelsius = false
     
     //Prelinked Outlets
     @IBOutlet weak var dateLabel: UILabel!
@@ -30,6 +32,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var weatherImg: UIImageView!
     @IBOutlet weak var weatherLabel: UILabel!
+    @IBOutlet weak var degreeButton: UIButton!
     
     //tableView outlets
     @IBOutlet weak var tableView: UITableView!
@@ -53,6 +56,22 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    // Button Action from Kelvin to Fahrenheit and celsius
+  
+    @IBAction func tempConversion(_ sender: UIButton) {
+
+        if isCelsius {
+            updateTempToFahrenheit()
+            degreeButton.setTitle("˚F", for: .normal)
+            isCelsius = false
+        } else {
+            updateTempToCelsius()
+            degreeButton.setTitle("˚C", for: .normal)
+            isCelsius = true
+        }
+        self.tableView.reloadData()
+        
+    }
     //MARK: - Set Location Delegate Methods here
     /**************************************************************/
     
@@ -95,7 +114,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 let WeatherJSON : JSON = JSON(response.result.value!)
                 self.updateCurrentWeatherData(json: WeatherJSON)
                 self.updateForecastWeatherData(json: WeatherJSON)
-                // print(self.WeatherJSON)
+//                print(WeatherJSON)
             } else {
                 print("Error is \(String(describing: response.result.error))")
             }
@@ -104,7 +123,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func updateCurrentWeatherData(json: JSON){
         
-        if let _ /*tempResult*/ = json["main"]["temp"].double {
+        if let _ = json["main"]["temp"].double {
             currentWeatherDataModel.city = json["name"].stringValue
             currentWeatherDataModel.temperature = json["main"]["temp"].doubleValue
             currentWeatherDataModel.backgroundImage = json["weather"][0]["main"].stringValue
@@ -117,12 +136,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func updateUIWithCurrentWeatherData(){
         
         locationLabel.text = "\(currentWeatherDataModel.city)"
-        temperatureLabel.text = "\(currentWeatherDataModel.temperature)˚"
         dateLabel.text = "\(currentWeatherDataModel.currentDate)"
         weatherImg.image = UIImage(named: currentWeatherDataModel.backgroundImage)
         weatherLabel.text = "\(currentWeatherDataModel.backgroundImage)"
+    updateTempToFahrenheit()
     }
-    
+   
+    func updateTempToFahrenheit(){
+
+        let temperature = String(format: "%.2f", ((currentWeatherDataModel.temperature - 273.15) * (9/5) + 32))
+
+        temperatureLabel.text = "\(temperature)"
+    }
+
+    func updateTempToCelsius(){
+
+        let temperature = String(format: "%.2f", (currentWeatherDataModel.temperature - 273.15))
+
+        temperatureLabel.text = "\(temperature)"
+    }
+  
     //  Forecast Weather Data Methods
     
     func updateForecastWeatherData(json : JSON){
@@ -155,7 +188,16 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         {
             let objArray = arrayToStoreObjData[indexPath.row]
             let forecastDataModel = ForecastDataModel(forecastDict: objArray)
-            cell.configureForecastCell(forecast: forecastDataModel)
+            
+            if isCelsius {
+                cell.configureForecastCellWithCelcius(forecast: forecastDataModel)
+            } else {
+            
+            cell.configureForecastCellWithFahrenheit(forecast: forecastDataModel)
+               
+            }
+            
+            
             return cell
             
         } else {

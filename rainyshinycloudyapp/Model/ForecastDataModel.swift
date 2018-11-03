@@ -15,15 +15,17 @@ class ForecastDataModel {
     var time : String?
     var day : String?
     var weatherImg = " "
-    var highTemp : Int = 0
-    var lowTemp : Int = 0
+    var highTemp : Double = 0
+    var lowTemp : Double = 0
     var formatterForTime = DateFormatter()
     var formatterForDay = DateFormatter()
     
-    init(forecastDict : JSON) {
+    convenience init(forecastDict : JSON) {
         
-        lowTemp = forecastDict["main"]["temp_min"].intValue
-        highTemp = forecastDict["main"]["temp_max"].intValue
+        self.init()
+        
+        lowTemp = forecastDict["main"]["temp_min"].doubleValue
+        highTemp = forecastDict["main"]["temp_max"].doubleValue
         weatherImg = forecastDict["weather"][0]["main"].stringValue
         
         if let forecastedDate = forecastDict["dt"].double {
