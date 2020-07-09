@@ -12,8 +12,6 @@ class TempConversionButton: UIButton {
 
     var isCelcius = false
     @IBAction func degreeButton(_ sender: Any) {
-        
-
         tempConversion(bool: !isCelcius)
     }
     
@@ -24,11 +22,5 @@ class TempConversionButton: UIButton {
         let title = bool ? "˚F" : "˚C"
         setTitle(title, for: .normal)
         print(title)
-        
-        
     }
-    
-    
-    
-    
 }

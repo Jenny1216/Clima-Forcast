@@ -9,7 +9,6 @@
 import UIKit
 
 class CurrentWeatherDataModel {
-    
     var temperature : Double = 0
     var city : String = " "
     var backgroundImage = " "

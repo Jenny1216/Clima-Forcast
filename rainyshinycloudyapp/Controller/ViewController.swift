@@ -53,13 +53,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         tableView.separatorStyle = .singleLine
         tableView.separatorColor = UIColor.gray
         updateUIWithCurrentWeatherData()
-        
     }
     
     // Button Action from Kelvin to Fahrenheit and celsius
-  
     @IBAction func tempConversion(_ sender: UIButton) {
-
         if isCelsius {
             updateTempToFahrenheit()
             degreeButton.setTitle("˚F", for: .normal)
@@ -70,17 +67,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             isCelsius = true
         }
         self.tableView.reloadData()
-        
     }
-    //MARK: - Set Location Delegate Methods here
-    /**************************************************************/
     
+    //MARK: - Set Location Delegate Methods here
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         let location = locations[locations.count - 1]
         
         if location.horizontalAccuracy > 0 {
-            
             locationManager.stopUpdatingLocation()
             locationManager.delegate = nil
             
@@ -101,20 +95,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     //MARK:- Networking
-    /***************************************************************/
-    
     // Current Weather Data Methods
-    
     func getWeatherData(url : String, parameters : [String:String]) {
         
-        Alamofire.request(url, method:.get, parameters: parameters).responseJSON {
-            response in
+        Alamofire.request(url, method:.get, parameters: parameters).responseJSON { response in
+            
             if response.result.isSuccess{
-                
                 let WeatherJSON : JSON = JSON(response.result.value!)
                 self.updateCurrentWeatherData(json: WeatherJSON)
                 self.updateForecastWeatherData(json: WeatherJSON)
-//                print(WeatherJSON)
+                print(WeatherJSON)
             } else {
                 print("Error is \(String(describing: response.result.error))")
             }
@@ -134,33 +124,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func updateUIWithCurrentWeatherData(){
-        
         locationLabel.text = "\(currentWeatherDataModel.city)"
         dateLabel.text = "\(currentWeatherDataModel.currentDate)"
         weatherImg.image = UIImage(named: currentWeatherDataModel.backgroundImage)
         weatherLabel.text = "\(currentWeatherDataModel.backgroundImage)"
-    updateTempToFahrenheit()
+        updateTempToFahrenheit()
     }
-   
-    func updateTempToFahrenheit(){
-
-        let temperature = String(format: "%.2f", ((currentWeatherDataModel.temperature - 273.15) * (9/5) + 32))
-
-        temperatureLabel.text = "\(temperature)"
-    }
-
-    func updateTempToCelsius(){
-
-        let temperature = String(format: "%.2f", (currentWeatherDataModel.temperature - 273.15))
-
-        temperatureLabel.text = "\(temperature)"
-    }
-  
-    //  Forecast Weather Data Methods
     
+    func updateTempToFahrenheit(){
+        let temperature = String(format: "%.2f", ((currentWeatherDataModel.temperature - 273.15) * (9/5) + 32))
+        temperatureLabel.text = "\(temperature)"
+    }
+    
+    func updateTempToCelsius(){
+        let temperature = String(format: "%.2f", (currentWeatherDataModel.temperature - 273.15))
+        temperatureLabel.text = "\(temperature)"
+    }
+    
+    //  Forecast Weather Data Methods
     func updateForecastWeatherData(json : JSON){
-
-        if let _ /*dict*/ = json.dictionary {
+        if let _ = json.dictionary {
             
             if let list = json["list"].array {
                 
@@ -176,41 +159,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
     
-    /* MARK:- TableView Datasource Methods ******************************/
-    
+    // MARK:- TableView Datasource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arrayToStoreObjData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "ForecastCell", for: indexPath) as? ForecastCell
-        {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "ForecastCell", for: indexPath) as? ForecastCell {
             let objArray = arrayToStoreObjData[indexPath.row]
             let forecastDataModel = ForecastDataModel(forecastDict: objArray)
             
             if isCelsius {
                 cell.configureForecastCellWithCelcius(forecast: forecastDataModel)
             } else {
-            
-            cell.configureForecastCellWithFahrenheit(forecast: forecastDataModel)
-               
+                cell.configureForecastCellWithFahrenheit(forecast: forecastDataModel)
             }
-            
-            
             return cell
-            
         } else {
             return ForecastCell()
         }
     }
     
-    /* MARK:- TableView Delegate Methods **********************************/
-    
-    
+    // MARK:- TableView Delegate Methods
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-

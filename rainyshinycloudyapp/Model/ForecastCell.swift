@@ -29,8 +29,7 @@ class ForecastCell: UITableViewCell {
         forecastMinTemp.text = "\(minTemp)˚"
         let maxTemp = String(format: "%.2f", ((forecast.highTemp - 273.15) * (9/5) + 32))
         forecastMaxTemp.text = "\(maxTemp)˚"
-        
-}
+    }
     
     func configureForecastCellWithCelcius(forecast : ForecastDataModel) {
         
@@ -43,6 +42,5 @@ class ForecastCell: UITableViewCell {
         forecastMinTemp.text = "\(minTemp)˚"
         let maxTemp = String(format: "%.2f", (forecast.highTemp - 273.15))
         forecastMaxTemp.text = "\(maxTemp)˚"
-        
     }
 }
